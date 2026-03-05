@@ -9,7 +9,6 @@ class CategorySerializers(serializers.ModelSerializer):
 
 
 class TypesSerializerDetail(serializers.ModelSerializer):
-    """Serializer for Types with category details"""
     category_title = serializers.CharField(source='category.title', read_only=True)
 
     class Meta:
