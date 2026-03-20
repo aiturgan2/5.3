@@ -7,6 +7,7 @@ from rest_framework.generics import (
 from rest_framework import mixins, filters
 from rest_framework.viewsets import GenericViewSet
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.permissions import IsAuthenticated
 
 from app.product.serializers import (
     CategorySerializers, TypesSerilaizers,
@@ -47,6 +48,14 @@ class ProductAPI(mixins.ListModelMixin,
         if self.action in ["create", "update", "partial_update"]:
             return ProductCreateSerializers
         return ProductSerializer
+
+    def get_permissions(self):
+        if self.action == 'create':
+            return [IsAuthenticated()]
+        return []
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
     
 
