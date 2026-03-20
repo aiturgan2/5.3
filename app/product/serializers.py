@@ -7,25 +7,10 @@ class CategorySerializers(serializers.ModelSerializer):
         model = Category
         fields = ['id', 'title', 'image', 'crated_at']
 
-
-class TypesSerializerDetail(serializers.ModelSerializer):
-    category_title = serializers.CharField(source='category.title', read_only=True)
-
-    class Meta:
-        model = Types
-        fields = ['id', 'title', 'description', 'category', 'category_title', 'crated_at']
-
-
 class TypesSerilaizers(serializers.ModelSerializer):
     class Meta:
         model = Types
         fields = ['id', 'title', 'description', 'category', 'crated_at']
-
-    def validate_category(self, value):
-        """Validate that category exists"""
-        if not Category.objects.filter(id=value.id).exists():
-            raise serializers.ValidationError("Категория не найдена")
-        return value
 
 class ProductImageSerializer(serializers.ModelSerializer):
     image = serializers.SerializerMethodField()
@@ -35,9 +20,9 @@ class ProductImageSerializer(serializers.ModelSerializer):
         fields = ['id', 'image', 'product']
 
     def get_image(self, obj):
-        request = self.context.get("request")
+        requets = self.context.get("request")
         url = obj.image.url
-        return request.build_absolute_uri(url) if request else url
+        return request.build_absolute_url(url) if request else url
 
 class ProductSerializer(serializers.ModelSerializer):
     first_image = serializers.SerializerMethodField()
@@ -52,10 +37,10 @@ class ProductSerializer(serializers.ModelSerializer):
         ]
 
     def get_first_image(self, obj):
-        first_img = obj.images.first()
-        if first_img and first_img.image:
+        fierts_img = obj.images.first()
+        if fierts_img and fierts_img.image:
             request = self.context.get("request")
-            url = first_img.image.url
+            url = fierts_img.image.url
             return request.build_absolute_uri(url) if request else url
         return None
 
